@@ -7,7 +7,7 @@ library("stringr")
 library("devtools")
 library("wesanderson")
 
-input_loc <- "./inputs/day01input.txt"
+input_loc <- "./day01/day01input.txt"
 
 dat <- data.table::fread(input_loc)
 df <- tibble::as_tibble(dat) |>
