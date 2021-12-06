@@ -1,4 +1,4 @@
-## day 3 advent of code in R
+## day 4 advent of code in R
 library("tidyverse")
 library("dplyr")
 library("data.table")
