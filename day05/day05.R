@@ -19,8 +19,8 @@ df_coords <- df_coords |> separate(V2, c("y1","x2"), " -> ") |>
   rename(x1 = V1, y2 = V3) |>
   mutate(across(.fns = as.integer))
 
-max_x <- max(df_coords$x1, df_coords$x2)
-max_y <- max(df_coords$y1, df_coords$y2)
+max_x <- max(df_coords$x1, df_coords$x2)+1
+max_y <- max(df_coords$y1, df_coords$y2)+1
 
 #map <- matrix(nrow = 10, ncol = 10, data = 0)
 map <- matrix(nrow = max_y, ncol = max_x, data = 0)
@@ -45,6 +45,22 @@ draw_lines <- function (map, coords){
     ## draw line along x axis
     for (j in x1:x2){
       map[y1,j] <- map[y1,j] + 1
+    }
+  } else if (abs(x1 - x2) == abs(y1 - y2)){
+    ## diagonal
+    if (y1 < y2) {up <- 1} else {up <- 0}
+    if (x1 < x2) {right <-1} else {right <- 0}
+
+    for (k in 0:(abs(x1 - x2))) {
+      if (up == 1 & right == 1) { ## 45 degrees
+        map[(y1 + k),(x1 + k)] <- map[(y1 + k),(x1 + k)] + 1
+      } else if (up == 1 & right == 0) { ## 135 degrees
+        map[(y1 + k),(x1 - k)] <- map[(y1 + k),(x1 - k)] + 1
+      } else if (up == 0 & right == 0) { ## 225 degrees
+        map[(y1 - k),(x1 - k)] <- map[(y1 - k),(x1 - k)] + 1
+      } else {  ## 315 degrees
+        map[(y1 - k),(x1 + k)] <- map[(y1 - k),(x1 + k)] + 1
+      }
     }
   }
   map
