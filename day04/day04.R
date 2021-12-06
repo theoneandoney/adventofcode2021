@@ -121,3 +121,49 @@ bingo <- function(bingo_numbers, num_of_cards, bingo_cards, card_size_x, card_si
 
 answer <- bingo(bingo_numbers, num_of_cards, bingo_cards, card_size_x, card_size_y, bingo_answers)
 
+
+## for part 2, need to find the LAST bingo card that will win
+## let the giant squid win
+
+lose_bingo <- function(bingo_numbers, num_of_cards, bingo_cards, card_size_x, card_size_y, bingo_answers) {
+  ## go through each bingo number, check against bingo cards
+  winning_number <- NA
+  winning_card <- tibble(.rows = card_size_y, .cols = card_size_x, fill=NA)
+  solution <- NA
+  loser_card_number <- NA
+  
+  for (k in 1:dim(bingo_numbers)[2]){
+    previous_number <- current_number
+    current_number <- as.integer(bingo_numbers[k])
+    ## check for bingo winners - add function here
+    #print(current_number)
+    current_bingos <- check_for_all_bingos(num_of_cards, bingo_answers, card_size_x, card_size_y)
+    losers <- current_bingos |> filter(bingo_cnt == 0)
+    ## need to keep iterating until only 1 "loser" board remains
+    # print(current_bingos)
+    # print(losers)
+    # print(dim(losers)[1])
+    if (dim(losers)[1] == 0) {  
+      print("WE HAVE A LOSER!")
+      ## need to keep track of the current number
+      winning_number <- previous_number
+      n <- loser_card_number - 1
+      losing_card <- bingo_cards[(1:card_size_y)+(card_size_y * n),]
+      solution <- score_bingo(losing_card, card_size_x, winning_number)
+      break
+    } else {
+      if(dim(losers)[1] == 1) {
+        ## we've narrowed it down to the last card, now just need to 
+        ## keep track of card number, and iterate until it wins
+        loser_card_number <- as.integer(losers |> select(card_number))  
+      }
+      ## assuming no winner exists, check for matches - add function here
+      bingo_answers <- update_answers(current_number, bingo_cards, bingo_answers)
+      bingo_cards <- update_cards(current_number, bingo_cards, bingo_answers)
+    }
+  }
+  solution
+}
+
+solution2 <- lose_bingo(bingo_numbers, num_of_cards, bingo_cards, card_size_x, card_size_y, bingo_answers)
+solution2
