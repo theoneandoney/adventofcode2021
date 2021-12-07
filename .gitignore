@@ -2,3 +2,7 @@
 .Rhistory
 .RData
 .Ruserdata
+
+.fake
+.ionide
+.DS_Store
