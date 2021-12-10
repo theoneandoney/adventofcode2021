@@ -47,3 +47,73 @@ calculate_risk <- function(df, low_pts) {
 lp <- df|> find_low_pts()
 answer1 <- calculate_risk(df, lp)
 answer1
+
+
+
+find_high_pts <- function(df) {
+  dat_temp <- matrix("9", nrow=1, ncol=dim(dat)[2])
+  dat_temp <- tibble::as_tibble(dat_temp) |> mutate(across(.cols = everything(), .fns = as.double))
+  df <- bind_rows(dat_temp, df)
+  df <- bind_rows(df, dat_temp)
+  df <- df |> add_column(first = 9, .before = "V1") |> add_column(last = 9)
+  hp <- matrix(0, ncol = dim(df)[2], nrow = dim(df)[1])
+  hp <- as.tibble(hp) |> mutate(across(.cols = everything(), .fns = as.double))
+  colnames(hp) <- colnames(df)
+  
+  for (i in 2:(dim(df)[1]-1)) {
+    for (j in 2:(dim(df)[2]-1)) {
+      if (df[i,j] == 9) {
+        hp[i,j] <- NA
+      } else {
+        hp[i,j] <- 1
+      }
+    }
+  }
+  y <- dim(hp)[1] - 1
+  x <- dim(hp)[2] - 1
+  hp <- hp[2:y,2:x]
+}
+
+  
+hp <- find_high_pts(df)  
+hp
+
+find_basins <- function(hp) {
+  dat_temp <- matrix(NA, nrow=1, ncol=dim(dat)[2])
+  dat_temp <- tibble::as_tibble(dat_temp) |> mutate(across(.cols = everything(), .fns = as.double))
+  hp <- bind_rows(dat_temp, hp)
+  hp <- bind_rows(hp, dat_temp)
+  hp <- hp |> add_column(first = NA, .before = "V1") |> add_column(last = NA)
+  
+  cnt <- 2
+  local_cnt <- 1
+  
+  for (i in 2:dim(hp)[1]) {
+    for (j in 2:dim(hp)[2]) {
+      ## check to see if any surrounding locations are NOT NA, take their cnt
+      ## otherwise use cnt and move on to the next spot
+      if (is.na(hp[i,j])) {
+        hp[i,j] <- hp[i,j]
+      } else if (!is.na(hp[i-1,j]) & hp[i-1,j] > 1) {
+        local_cnt <- hp[i-1,j]
+        hp[i,j] <- 0
+#      hp[i,j] <- local_cnt
+      } else if (!is.na(hp[i,j-1]) & hp[i,j-1] > 1) {
+        local_cnt <- hp[i,j-1]
+        hp[i,j] <- 0
+#        hp[i,j] <- local_cnt
+      } else {
+        hp[i,j] <- 0
+        cnt <- cnt + 1
+      }
+        # else if (!is.na(hp[i,j+1]) & hp[i,j+1] > 1) {
+        # local_cnt <- hp[i,j+1]
+        # hp[i,j] <- local_cnt
+    }
+  }
+  hp
+  
+}
+
+test <- find_basins(hp)
+test
