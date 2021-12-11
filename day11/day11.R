@@ -89,5 +89,29 @@ solve_pt1 <- function(df, n_steps) {
   cnt_flashes
 }
 
-solution1 <- solve_pt1(df, 100)
-solution1
+#solution1 <- solve_pt1(df, 100)
+#solution1
+
+
+solve_pt2 <- function(df) {
+  n_step <- 0
+  keep_going <- TRUE
+  while (keep_going == TRUE){
+#  for (i in 1:Inf){
+    n_step <- n_step + 1
+    n_flashes <- 0
+    df <- df |> take_step() 
+    n_flashes <- df |> count_flashes()
+    df <- df |> reset_zeros()
+    if (n_flashes == 100) {
+      keep_going <- FALSE
+      break
+    } else {
+      keep_going <- TRUE
+    }
+  }
+  n_step
+}
+
+solution2 <- solve_pt2(df)
+solution2
