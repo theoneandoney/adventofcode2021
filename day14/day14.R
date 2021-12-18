@@ -53,5 +53,5 @@ solution_pt1 <- function(df, n) {
 }
 
 n <- 10
-solution <- df |> pair_insertion_process(rules,n) |> solution_pt1(n)
-solution
+solution <- df |> pair_insertion_process(rules,n)# |> solution_pt1(n)
+#solution
